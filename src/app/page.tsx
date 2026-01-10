@@ -2,8 +2,10 @@
 "use client";
 
 import BoqTable from "@/components/boq-table";
+import CommunityView from "@/components/community-view";
 import { Icons } from "@/components/icons";
 import ImageGallery from "@/components/image-gallery";
+import ProgressView from "@/components/progress-view";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -21,9 +23,11 @@ export default function Home() {
       <main className="flex flex-1 flex-col gap-4 p-2 md:gap-8 md:p-8">
         {isMobile ? (
           <Tabs defaultValue="table" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="table">BOQ Table</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="table">BOQ</TabsTrigger>
               <TabsTrigger value="images">Images</TabsTrigger>
+              <TabsTrigger value="progress">Progress</TabsTrigger>
+              <TabsTrigger value="community">Community</TabsTrigger>
             </TabsList>
             <TabsContent value="table" className="mt-4">
                <BoqTable />
@@ -33,15 +37,19 @@ export default function Home() {
                 <ImageGallery />
               </div>
             </TabsContent>
+            <TabsContent value="progress" className="mt-4">
+              <ProgressView />
+            </TabsContent>
+            <TabsContent value="community" className="mt-4">
+              <CommunityView />
+            </TabsContent>
           </Tabs>
         ) : (
-          <div className="grid flex-1 gap-4 md:gap-8 lg:grid-cols-5">
-            <div className="lg:col-span-3">
-              <BoqTable />
-            </div>
-            <div className="lg:col-span-2">
-              <ImageGallery />
-            </div>
+          <div className="grid flex-1 gap-4 md:gap-8 lg:grid-cols-2">
+            <BoqTable />
+            <ImageGallery />
+            <ProgressView />
+            <CommunityView />
           </div>
         )}
       </main>
