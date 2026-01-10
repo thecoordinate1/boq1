@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -61,7 +62,7 @@ export default function BoqForm({ item, onSubmit, onClose }: BoqFormProps) {
             </FormItem>
           )}
         />
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <FormField
             control={form.control}
             name="unit"
@@ -102,7 +103,7 @@ export default function BoqForm({ item, onSubmit, onClose }: BoqFormProps) {
             )}
           />
         </div>
-        <div className="flex justify-end gap-2">
+        <div className="flex justify-end gap-2 pt-4">
             <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
             <Button type="submit">{item ? "Save Changes" : "Add Item"}</Button>
         </div>

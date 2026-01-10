@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -95,10 +96,10 @@ export default function BoqTable() {
   return (
     <>
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader className="flex flex-row items-center justify-between px-4 pt-4 md:px-6 md:pt-6">
           <div>
-            <CardTitle>Bill of Quantities</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-xl md:text-2xl">Bill of Quantities</CardTitle>
+            <CardDescription className="text-xs md:text-sm">
               Drainage clearing project estimates.
             </CardDescription>
           </div>
@@ -107,16 +108,16 @@ export default function BoqTable() {
             Add Item
           </Button>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0 md:p-6 md:pt-0">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[50%]">Description</TableHead>
+                <TableHead className="w-[40%] pl-4 md:pl-auto">Description</TableHead>
                 <TableHead>Unit</TableHead>
-                <TableHead className="text-right">Quantity</TableHead>
+                <TableHead className="text-right">Qty</TableHead>
                 <TableHead className="text-right">Rate</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
-                <TableHead className="w-[50px]"></TableHead>
+                <TableHead className="text-right pr-4 md:pr-auto">Amount</TableHead>
+                <TableHead className="w-[40px] md:w-[50px]"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -124,7 +125,7 @@ export default function BoqTable() {
                 const amount = item.quantity * item.rate;
                 return (
                   <TableRow key={item.id}>
-                    <TableCell className="font-medium">
+                    <TableCell className="font-medium pl-4 md:pl-auto">
                       {item.description}
                     </TableCell>
                     <TableCell>{item.unit}</TableCell>
@@ -132,7 +133,7 @@ export default function BoqTable() {
                     <TableCell className="text-right">
                       {formatCurrency(item.rate)}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right pr-4 md:pr-auto">
                       {formatCurrency(amount)}
                     </TableCell>
                     <TableCell>
@@ -182,10 +183,10 @@ export default function BoqTable() {
             </TableBody>
             <TableFooter>
               <TableRow>
-                <TableCell colSpan={4} className="text-right font-bold text-lg">
+                <TableCell colSpan={4} className="text-right font-bold text-base md:text-lg">
                   Grand Total
                 </TableCell>
-                <TableCell className="text-right font-bold text-lg">
+                <TableCell className="text-right font-bold text-base md:text-lg pr-4 md:pr-auto">
                   {formatCurrency(grandTotal)}
                 </TableCell>
                 <TableCell></TableCell>

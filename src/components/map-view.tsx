@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -26,15 +27,15 @@ export default function MapView() {
   const mapCenter = { lat: 51.515, lng: -0.09 }; // Center of London
 
   return (
-    <Card className="h-[400px] lg:h-full">
-      <CardHeader>
-        <CardTitle>Project Map</CardTitle>
-        <CardDescription>
+    <Card className="h-full">
+      <CardHeader className="px-4 pt-4 md:px-6 md:pt-6">
+        <CardTitle className="text-xl md:text-2xl">Project Map</CardTitle>
+        <CardDescription className="text-xs md:text-sm">
           Drainage clearing locations and points of interest.
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="h-[calc(100vh-280px)] min-h-[400px] lg:h-[calc(100vh-220px)] rounded-lg overflow-hidden">
+      <CardContent className="p-0 md:p-6 md:pt-0 h-[calc(100%-80px)]">
+        <div className="h-full rounded-lg overflow-hidden">
           {GOOGLE_MAPS_API_KEY === 'YOUR_GOOGLE_MAPS_API_KEY_HERE' ? (
              <div className="w-full h-full bg-muted flex flex-col items-center justify-center text-center p-4">
                 <p className="font-semibold text-lg">Map Unavailable</p>
@@ -67,18 +68,19 @@ export default function MapView() {
                 <InfoWindow
                   position={selectedPoint.position}
                   onCloseClick={() => setSelectedPointId(null)}
+                  pixelOffset={[0,-40]}
                 >
-                  <div className="p-2 max-w-xs">
-                    <h3 className="font-semibold mb-2">{selectedPoint.title}</h3>
+                  <div className="p-1 max-w-xs">
+                    <h3 className="font-semibold mb-1 text-base">{selectedPoint.title}</h3>
                     <Image
                       src={selectedPoint.image.url}
                       alt={selectedPoint.title}
-                      width={400}
-                      height={300}
-                      className="rounded-md object-cover mb-2"
+                      width={200}
+                      height={150}
+                      className="rounded-md object-cover mb-2 w-full"
                       data-ai-hint={selectedPoint.image.hint}
                     />
-                    <p className="text-sm text-muted-foreground">{selectedPoint.description}</p>
+                    <p className="text-xs text-muted-foreground">{selectedPoint.description}</p>
                   </div>
                 </InfoWindow>
               )}
