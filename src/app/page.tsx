@@ -3,7 +3,7 @@
 
 import BoqTable from "@/components/boq-table";
 import { Icons } from "@/components/icons";
-import MapView from "@/components/map-view";
+import ImageGallery from "@/components/image-gallery";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -23,14 +23,14 @@ export default function Home() {
           <Tabs defaultValue="table" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="table">BOQ Table</TabsTrigger>
-              <TabsTrigger value="map">Map</TabsTrigger>
+              <TabsTrigger value="images">Images</TabsTrigger>
             </TabsList>
             <TabsContent value="table" className="mt-4">
                <BoqTable />
             </TabsContent>
-            <TabsContent value="map" className="mt-4">
+            <TabsContent value="images" className="mt-4">
               <div className="h-[calc(100vh-200px)]">
-                <MapView />
+                <ImageGallery />
               </div>
             </TabsContent>
           </Tabs>
@@ -40,7 +40,7 @@ export default function Home() {
               <BoqTable />
             </div>
             <div className="lg:col-span-2">
-              <MapView />
+              <ImageGallery />
             </div>
           </div>
         )}
