@@ -1,3 +1,22 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "map-point-1",
+      "description": "Initial survey point for drainage channel.",
+      "imageUrl": "https://images.unsplash.com/photo-1761217760023-f5f7c5d23496?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxkcmFpbmFnZSUyMGNoYW5uZWx8ZW58MHx8fHwxNzY4MDQxMzM1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "drainage channel"
+    },
+    {
+      "id": "map-point-2",
+      "description": "Area with significant debris buildup.",
+      "imageUrl": "https://images.unsplash.com/photo-1742715342246-7e144228f9f1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxkZWJyaXMlMjBidWlsZHVwfGVufDB8fHx8MTc2ODA0MTMzNXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "debris buildup"
+    },
+    {
+      "id": "map-point-3",
+      "description": "Location for a new access point.",
+      "imageUrl": "https://images.unsplash.com/photo-1575281923032-f40d94ef6160?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjb25zdHJ1Y3Rpb24lMjBzaXRlfGVufDB8fHx8MTc2ODAxODYyM3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "construction site"
+    }
+  ]
 }
