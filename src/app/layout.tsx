@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
-  title: 'BOQ Tracker',
+  title: 'BOQ',
   description: 'Manage and display Bill of Quantities for a drainage clearing project.',
 };
 
