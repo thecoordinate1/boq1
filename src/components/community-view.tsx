@@ -5,16 +5,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "./ui/progress";
+import { communityContributors, communityTarget } from "@/lib/data";
 
-const contributors = [
-  { name: "Alice Johnson", initials: "AJ", image: "https://picsum.photos/seed/101/40/40", contribution: "Debris clean-up", role: "Volunteer", amount: 5000 },
-  { name: "Bob Williams", initials: "BW", image: "https://picsum.photos/seed/102/40/40", contribution: "Reported blockage", role: "Resident", amount: 1000 },
-  { name: "Charlie Brown", initials: "CB", image: "https://picsum.photos/seed/103/40/40", contribution: "Financial donation", role: "Sponsor", amount: 25000 },
-  { name: "Diana Miller", initials: "DM", image: "https://picsum.photos/seed/104/40/40", contribution: "Organized event", role: "Coordinator", amount: 10000 },
-];
-
-const targetAmount = 50000;
-const totalContributions = contributors.reduce((acc, c) => acc + c.amount, 0);
+const targetAmount = communityTarget;
+const totalContributions = communityContributors.reduce((acc, c) => acc + c.amount, 0);
 const progress = (totalContributions / targetAmount) * 100;
 
 const formatCurrency = (amount: number) => {
@@ -40,7 +34,7 @@ export default function CommunityView() {
 
           <div className="space-y-4 pt-4">
             <h4 className="font-semibold">Top Contributors</h4>
-            {contributors.map((c) => (
+            {communityContributors.map((c) => (
               <div key={c.name} className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <Avatar>

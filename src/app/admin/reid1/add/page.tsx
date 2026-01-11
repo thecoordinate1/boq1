@@ -2,6 +2,9 @@
 
 import BoqTable from "@/components/boq-table";
 import { Icons } from "@/components/icons";
+import AdminCommunity from "@/components/admin/admin-community";
+import AdminImages from "@/components/admin/admin-images";
+import AdminProgress from "@/components/admin/admin-progress";
 
 export default function AdminBoqPage() {
   return (
@@ -14,6 +17,9 @@ export default function AdminBoqPage() {
       </header>
       <main className="flex flex-1 flex-col gap-4 p-2 md:gap-8 md:p-8">
         <BoqTable />
+        <AdminImages />
+        <AdminProgress />
+        <AdminCommunity />
       </main>
     </div>
   );

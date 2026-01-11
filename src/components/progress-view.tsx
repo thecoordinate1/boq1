@@ -3,13 +3,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-
-const progressData = [
-    { title: "Site Clearance", value: 90, target: "150 sq.m" },
-    { title: "Excavation", value: 65, target: "75 cu.m" },
-    { title: "Pipe Laying", value: 75, target: "200 m" },
-    { title: "Backfilling", value: 50, target: "80 cu.m" },
-];
+import { progressData } from "@/lib/data";
 
 export default function ProgressView() {
   return (
