@@ -1,3 +1,4 @@
+
 "use client";
 
 import BoqTable from "@/components/boq-table";
@@ -16,7 +17,7 @@ export default function AdminBoqPage() {
         </div>
       </header>
       <main className="flex flex-1 flex-col gap-4 p-2 md:gap-8 md:p-8">
-        <BoqTable />
+        <BoqTable isEditable={true} />
         <AdminImages />
         <AdminProgress />
         <AdminCommunity />

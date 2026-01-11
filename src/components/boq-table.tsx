@@ -48,7 +48,7 @@ import BoqForm from "./boq-form";
 import type { BOQItem } from "@/lib/types";
 import { initialBoqItems } from "@/lib/data";
 
-export default function BoqTable() {
+export default function BoqTable({ isEditable = false }: { isEditable?: boolean }) {
   const [items, setItems] = useState<BOQItem[]>(initialBoqItems);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<BOQItem | null>(null);
@@ -71,11 +71,11 @@ export default function BoqTable() {
     if (editingItem) {
       setItems(
         items.map((item) =>
-          item.id === editingItem.id ? { ...item, ...data } : item
+          item.id === editingItem.id ? { ...item, ...data, amount: data.quantity * data.rate } : item
         )
       );
     } else {
-      setItems([...items, { id: crypto.randomUUID(), ...data }]);
+      setItems([...items, { id: crypto.randomUUID(), ...data, amount: data.quantity * data.rate }]);
     }
     setIsDialogOpen(false);
     setEditingItem(null);
@@ -100,10 +100,12 @@ export default function BoqTable() {
               Drainage clearing project estimates.
             </CardDescription>
           </div>
-          <Button size="sm" onClick={handleAddItem}>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Add Item
-          </Button>
+          {isEditable && (
+            <Button size="sm" onClick={handleAddItem}>
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Add Item
+            </Button>
+          )}
         </CardHeader>
         <CardContent className="p-0 md:p-6 md:pt-0">
           <Table>
@@ -114,7 +116,7 @@ export default function BoqTable() {
                 <TableHead className="text-right">Qty</TableHead>
                 <TableHead className="text-right">Rate</TableHead>
                 <TableHead className="text-right pr-4 md:pr-auto">Amount</TableHead>
-                <TableHead className="w-[40px] md:w-[50px]"></TableHead>
+                {isEditable && <TableHead className="w-[40px] md:w-[50px]"></TableHead>}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -133,60 +135,62 @@ export default function BoqTable() {
                     <TableCell className="text-right pr-4 md:pr-auto">
                       {formatCurrency(amount)}
                     </TableCell>
-                    <TableCell>
-                      <AlertDialog>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                              <span className="sr-only">Open menu</span>
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => handleEditItem(item)}>
-                              <Pencil className="mr-2 h-4 w-4" />
-                              Edit
-                            </DropdownMenuItem>
-                            <AlertDialogTrigger asChild>
-                              <DropdownMenuItem className="text-red-600 focus:text-red-600">
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                Delete
+                    {isEditable && (
+                      <TableCell>
+                        <AlertDialog>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => handleEditItem(item)}>
+                                <Pencil className="mr-2 h-4 w-4" />
+                                Edit
                               </DropdownMenuItem>
-                            </AlertDialogTrigger>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This action cannot be undone. This will permanently delete the BOQ item.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleDeleteItem(item.id)}
-                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                            >
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </TableCell>
+                              <AlertDialogTrigger asChild>
+                                <DropdownMenuItem className="text-red-600 focus:text-red-600">
+                                  <Trash2 className="mr-2 h-4 w-4" />
+                                  Delete
+                                </DropdownMenuItem>
+                              </AlertDialogTrigger>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. This will permanently delete the BOQ item.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleDeleteItem(item.id)}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </TableCell>
+                    )}
                   </TableRow>
                 );
               })}
             </TableBody>
             <TableFooter>
               <TableRow>
-                <TableCell colSpan={4} className="text-right font-bold text-base md:text-lg">
+                <TableCell colSpan={isEditable ? 5 : 4} className="text-right font-bold text-base md:text-lg">
                   Grand Total
                 </TableCell>
                 <TableCell className="text-right font-bold text-base md:text-lg pr-4 md:pr-auto">
                   {formatCurrency(grandTotal)}
                 </TableCell>
-                <TableCell></TableCell>
+                {isEditable && <TableCell></TableCell>}
               </TableRow>
             </TableFooter>
           </Table>
