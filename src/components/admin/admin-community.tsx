@@ -32,14 +32,8 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { communityContributors, communityTarget } from "@/lib/data";
 import { Input } from "../ui/input";
@@ -67,20 +61,20 @@ export default function AdminCommunity() {
     setEditingContributor(contributor);
     setIsDialogOpen(true);
   };
-  
+
   const handleDeleteItem = (name: string) => {
     setContributors(contributors.filter((c) => c.name !== name));
   };
 
   const handleFormSubmit = (data: Contributor) => {
     if (editingContributor) {
-        setContributors(
-            contributors.map((c) =>
-            c.name === editingContributor.name ? data : c
-            )
-        );
+      setContributors(
+        contributors.map((c) =>
+          c.name === editingContributor.name ? data : c
+        )
+      );
     } else {
-        setContributors([...contributors, data]);
+      setContributors([...contributors, data]);
     }
     setIsDialogOpen(false);
     setEditingContributor(null);
@@ -106,8 +100,8 @@ export default function AdminCommunity() {
           <div className="p-4 md:p-0">
             <Label htmlFor="targetAmount">Fundraising Target</Label>
             <div className="flex items-center gap-2 mt-2">
-                <Input id="targetAmount" type="number" value={target} onChange={(e) => setTarget(Number(e.target.value))} className="max-w-[200px]" />
-                <Button>Save Target</Button>
+              <Input id="targetAmount" type="number" value={target} onChange={(e) => setTarget(Number(e.target.value))} className="max-w-[200px]" />
+              <Button>Save Target</Button>
             </div>
           </div>
           <Table>
@@ -198,44 +192,44 @@ export default function AdminCommunity() {
 }
 
 function ContributorForm({ item, onSubmit, onClose }: { item: Contributor | null, onSubmit: (data: Contributor) => void, onClose: () => void }) {
-    const [name, setName] = useState(item?.name || "");
-    const [contribution, setContribution] = useState(item?.contribution || "");
-    const [role, setRole] = useState(item?.role || "Volunteer");
-    const [amount, setAmount] = useState(item?.amount || 0);
-    const [image, setImage] = useState(item?.image || "https://picsum.photos/seed/105/40/40");
-    
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        const initials = name.split(' ').map(n => n[0]).join('');
-        onSubmit({ name, contribution, role, amount, image, initials });
-    }
+  const [name, setName] = useState(item?.name || "");
+  const [contribution, setContribution] = useState(item?.contribution || "");
+  const [role, setRole] = useState(item?.role || "Volunteer");
+  const [amount, setAmount] = useState(item?.amount || 0);
+  const [image, setImage] = useState(item?.image || "https://picsum.photos/seed/105/40/40");
 
-    return (
-        <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-                <Label htmlFor="name">Name</Label>
-                <Input id="name" value={name} onChange={e => setName(e.target.value)} required />
-            </div>
-            <div>
-                <Label htmlFor="contribution">Contribution</Label>
-                <Input id="contribution" value={contribution} onChange={e => setContribution(e.target.value)} required />
-            </div>
-            <div>
-                <Label htmlFor="role">Role</Label>
-                <Input id="role" value={role} onChange={e => setRole(e.target.value)} required />
-            </div>
-             <div>
-                <Label htmlFor="amount">Amount</Label>
-                <Input id="amount" type="number" value={amount} onChange={e => setAmount(Number(e.target.value))} required />
-            </div>
-            <div>
-                <Label htmlFor="image">Image URL</Label>
-                <Input id="image" value={image} onChange={e => setImage(e.target.value)} required />
-            </div>
-            <div className="flex justify-end gap-2 pt-4">
-                <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
-                <Button type="submit">{item ? "Save Changes" : "Add Contributor"}</Button>
-            </div>
-        </form>
-    )
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const initials = name.split(' ').map(n => n[0]).join('');
+    onSubmit({ name, contribution, role, amount, image, initials });
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <Label htmlFor="name">Name</Label>
+        <Input id="name" value={name} onChange={e => setName(e.target.value)} required />
+      </div>
+      <div>
+        <Label htmlFor="contribution">Contribution</Label>
+        <Input id="contribution" value={contribution} onChange={e => setContribution(e.target.value)} required />
+      </div>
+      <div>
+        <Label htmlFor="role">Role</Label>
+        <Input id="role" value={role} onChange={e => setRole(e.target.value)} required />
+      </div>
+      <div>
+        <Label htmlFor="amount">Amount</Label>
+        <Input id="amount" type="number" value={amount} onChange={e => setAmount(Number(e.target.value))} required />
+      </div>
+      <div>
+        <Label htmlFor="image">Image URL</Label>
+        <Input id="image" value={image} onChange={e => setImage(e.target.value)} required />
+      </div>
+      <div className="flex justify-end gap-2 pt-4">
+        <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
+        <Button type="submit">{item ? "Save Changes" : "Add Contributor"}</Button>
+      </div>
+    </form>
+  )
 }

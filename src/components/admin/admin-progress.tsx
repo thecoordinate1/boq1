@@ -24,14 +24,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { progressData as initialProgressData } from "@/lib/data";
 import { Input } from "../ui/input";
@@ -54,20 +48,20 @@ export default function AdminProgress() {
     setEditingItem(item);
     setIsDialogOpen(true);
   };
-  
+
   const handleDeleteItem = (title: string) => {
     setProgressItems(progressItems.filter((item) => item.title !== title));
   };
 
   const handleFormSubmit = (data: ProgressItem) => {
     if (editingItem) {
-        setProgressItems(
-            progressItems.map((item) =>
-            item.title === editingItem.title ? data : item
-            )
-        );
+      setProgressItems(
+        progressItems.map((item) =>
+          item.title === editingItem.title ? data : item
+        )
+      );
     } else {
-        setProgressItems([...progressItems, data]);
+      setProgressItems([...progressItems, data]);
     }
     setIsDialogOpen(false);
     setEditingItem(null);
@@ -97,48 +91,48 @@ export default function AdminProgress() {
               </div>
               <Progress value={item.value} aria-label={`${item.title} progress`} />
               <p className="text-xs text-muted-foreground text-right">Target: {item.target}</p>
-              
-               <div className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <AlertDialog>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                              <span className="sr-only">Open menu</span>
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => handleEditItem(item)}>
-                              <Pencil className="mr-2 h-4 w-4" />
-                              Edit
-                            </DropdownMenuItem>
-                            <AlertDialogTrigger asChild>
-                              <DropdownMenuItem className="text-red-600 focus:text-red-600">
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                Delete
-                              </DropdownMenuItem>
-                            </AlertDialogTrigger>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This action cannot be undone. This will permanently delete this progress task.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleDeleteItem(item.title)}
-                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                            >
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                </div>
+
+              <div className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                <AlertDialog>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="h-8 w-8 p-0">
+                        <span className="sr-only">Open menu</span>
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => handleEditItem(item)}>
+                        <Pencil className="mr-2 h-4 w-4" />
+                        Edit
+                      </DropdownMenuItem>
+                      <AlertDialogTrigger asChild>
+                        <DropdownMenuItem className="text-red-600 focus:text-red-600">
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Delete
+                        </DropdownMenuItem>
+                      </AlertDialogTrigger>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently delete this progress task.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => handleDeleteItem(item.title)}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
             </div>
           ))}
         </CardContent>
@@ -161,34 +155,34 @@ export default function AdminProgress() {
 }
 
 function ProgressForm({ item, onSubmit, onClose }: { item: ProgressItem | null, onSubmit: (data: ProgressItem) => void, onClose: () => void }) {
-    const [title, setTitle] = useState(item?.title || "");
-    const [value, setValue] = useState(item?.value || 0);
-    const [target, setTarget] = useState(item?.target || "");
-    
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        onSubmit({ title, value, target });
-    }
+  const [title, setTitle] = useState(item?.title || "");
+  const [value, setValue] = useState(item?.value || 0);
+  const [target, setTarget] = useState(item?.target || "");
 
-    return (
-        <form onSubmit={handleSubmit} className="space-y-4 pt-4">
-            <div>
-                <Label htmlFor="title">Task Title</Label>
-                <Input id="title" value={title} onChange={e => setTitle(e.target.value)} required disabled={!!item} />
-                 {!!item && <p className="text-xs text-muted-foreground mt-1">Title cannot be edited.</p>}
-            </div>
-             <div>
-                <Label htmlFor="target">Target</Label>
-                <Input id="target" value={target} onChange={e => setTarget(e.target.value)} required />
-            </div>
-            <div>
-                <Label htmlFor="value">Progress ({value}%)</Label>
-                <Slider id="value" value={[value]} onValueChange={([val]) => setValue(val)} max={100} step={1} />
-            </div>
-            <div className="flex justify-end gap-2 pt-4">
-                <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
-                <Button type="submit">{item ? "Save Changes" : "Add Task"}</Button>
-            </div>
-        </form>
-    )
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit({ title, value, target });
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4 pt-4">
+      <div>
+        <Label htmlFor="title">Task Title</Label>
+        <Input id="title" value={title} onChange={e => setTitle(e.target.value)} required disabled={!!item} />
+        {!!item && <p className="text-xs text-muted-foreground mt-1">Title cannot be edited.</p>}
+      </div>
+      <div>
+        <Label htmlFor="target">Target</Label>
+        <Input id="target" value={target} onChange={e => setTarget(e.target.value)} required />
+      </div>
+      <div>
+        <Label htmlFor="value">Progress ({value}%)</Label>
+        <Slider id="value" value={[value]} onValueChange={([val]) => setValue(val)} max={100} step={1} />
+      </div>
+      <div className="flex justify-end gap-2 pt-4">
+        <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
+        <Button type="submit">{item ? "Save Changes" : "Add Task"}</Button>
+      </div>
+    </form>
+  )
 }
