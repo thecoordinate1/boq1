@@ -6,7 +6,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "./ui/progress";
-import { communityTarget } from "@/lib/data";
 import { createClient } from "@/lib/supabase/client";
 
 type Contributor = {
@@ -22,26 +21,37 @@ type Contributor = {
 export default function CommunityView() {
   const [contributors, setContributors] = useState<Contributor[]>([]);
   const [totalContributions, setTotalContributions] = useState(0);
-  const targetAmount = communityTarget;
+  const [targetAmount, setTargetAmount] = useState(0);
   const supabase = createClient();
 
   useEffect(() => {
     const fetchData = async () => {
-      const { data, error } = await supabase
+      // Fetch contributions
+      const { data: contribData } = await supabase
         .from('community_contributions')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (data) {
-        setContributors(data);
-        const total = data.reduce((acc, c) => acc + c.amount, 0);
+      if (contribData) {
+        setContributors(contribData);
+        const total = contribData.reduce((acc, c) => acc + c.amount, 0);
         setTotalContributions(total);
+      }
+
+      // Fetch BOQ items for target calculation
+      const { data: boqData } = await supabase
+        .from('boq_items')
+        .select('quantity, rate');
+
+      if (boqData) {
+        const boqTotal = boqData.reduce((acc, item) => acc + (item.quantity * item.rate), 0);
+        setTargetAmount(boqTotal * 1.1);
       }
     };
     fetchData();
   }, []);
 
-  const progress = (totalContributions / targetAmount) * 100;
+  const progress = targetAmount > 0 ? (totalContributions / targetAmount) * 100 : 0;
 
   const formatCurrency = (amount: number) => {
     return `K ${new Intl.NumberFormat("en-US").format(amount)}`;

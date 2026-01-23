@@ -42,22 +42,51 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { communityContributors, communityTarget } from "@/lib/data";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Badge } from "../ui/badge";
+import { createClient } from "@/lib/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { useEffect } from "react";
 
-type Contributor = { name: string; initials: string; image: string; contribution: string; role: string; amount: number };
+type Contributor = { id: string; name: string; initials: string; image: string; contribution: string; role: string; amount: number };
 
 const formatCurrency = (amount: number) => {
   return `K ${new Intl.NumberFormat("en-US").format(amount)}`;
 };
 
 export default function AdminCommunity() {
-  const [contributors, setContributors] = useState<Contributor[]>(communityContributors);
-  const [target, setTarget] = useState(communityTarget);
+  const [contributors, setContributors] = useState<Contributor[]>([]);
+  const [target, setTarget] = useState(0);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingContributor, setEditingContributor] = useState<Contributor | null>(null);
+  const supabase = createClient();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    // Fetch contributors
+    const { data: contribData, error: contribError } = await supabase
+      .from('community_contributions')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (contribData) setContributors(contribData);
+    if (contribError) console.error(contribError);
+
+    // Fetch BOQ items for target
+    const { data: boqData } = await supabase
+      .from('boq_items')
+      .select('quantity, rate');
+
+    if (boqData) {
+      const boqTotal = boqData.reduce((acc, item) => acc + (item.quantity * item.rate), 0);
+      setTarget(boqTotal * 1.1);
+    }
+  };
 
   const handleAddItem = () => {
     setEditingContributor(null);
@@ -69,22 +98,39 @@ export default function AdminCommunity() {
     setIsDialogOpen(true);
   };
 
-  const handleDeleteItem = (name: string) => {
-    setContributors(contributors.filter((c) => c.name !== name));
+  const handleDeleteItem = async (id: string) => {
+    const { error } = await supabase.from('community_contributions').delete().eq('id', id);
+    if (!error) {
+      setContributors(contributors.filter((c) => c.id !== id));
+      toast({ title: "Success", description: "Contributor removed" });
+    } else {
+      toast({ title: "Error", description: "Failed to remove contributor", variant: "destructive" });
+    }
   };
 
-  const handleFormSubmit = (data: Contributor) => {
-    if (editingContributor) {
-      setContributors(
-        contributors.map((c) =>
-          c.name === editingContributor.name ? data : c
-        )
-      );
-    } else {
-      setContributors([...contributors, data]);
+  const handleFormSubmit = async (data: Omit<Contributor, "id">) => {
+    try {
+      if (editingContributor) {
+        const { error } = await supabase
+          .from('community_contributions')
+          .update(data)
+          .eq('id', editingContributor.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from('community_contributions')
+          .insert([data]);
+        if (error) throw error;
+      }
+
+      fetchData();
+      setIsDialogOpen(false);
+      setEditingContributor(null);
+      toast({ title: "Success", description: "Contributor saved" });
+    } catch (error) {
+      console.error(error);
+      toast({ title: "Error", description: "Failed to save contributor", variant: "destructive" });
     }
-    setIsDialogOpen(false);
-    setEditingContributor(null);
   };
 
 
@@ -95,7 +141,7 @@ export default function AdminCommunity() {
           <div>
             <CardTitle className="text-xl md:text-2xl">Community Fundraising</CardTitle>
             <CardDescription className="text-xs md:text-sm">
-              Manage community contributors and fundraising target.
+              Manage community contributors. Target is linked to BOQ + 10%.
             </CardDescription>
           </div>
           <Button size="sm" onClick={handleAddItem}>
@@ -104,11 +150,10 @@ export default function AdminCommunity() {
           </Button>
         </CardHeader>
         <CardContent className="p-0 md:p-6 md:pt-0">
-          <div className="p-4 md:p-0">
-            <Label htmlFor="targetAmount">Fundraising Target</Label>
-            <div className="flex items-center gap-2 mt-2">
-              <Input id="targetAmount" type="number" value={target} onChange={(e) => setTarget(Number(e.target.value))} className="max-w-[200px]" />
-              <Button>Save Target</Button>
+          <div className="p-4 md:p-0 mb-6">
+            <Label className="text-muted-foreground uppercase text-[10px] font-bold tracking-wider">Current Fundraising Target</Label>
+            <div className="text-2xl font-bold text-primary">
+              {formatCurrency(target)}
             </div>
           </div>
           <Table>
@@ -124,7 +169,7 @@ export default function AdminCommunity() {
             <TableBody>
               {contributors.map((contributor) => {
                 return (
-                  <TableRow key={contributor.name}>
+                  <TableRow key={contributor.id}>
                     <TableCell className="font-medium">
                       {contributor.name}
                     </TableCell>
@@ -165,7 +210,7 @@ export default function AdminCommunity() {
                           <AlertDialogFooter>
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
                             <AlertDialogAction
-                              onClick={() => handleDeleteItem(contributor.name)}
+                              onClick={() => handleDeleteItem(contributor.id)}
                               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                             >
                               Delete

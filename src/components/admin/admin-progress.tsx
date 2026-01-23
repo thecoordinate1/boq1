@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import {
@@ -38,13 +38,34 @@ import { progressData as initialProgressData } from "@/lib/data";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Slider } from "../ui/slider";
+import { createClient } from "@/lib/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
-type ProgressItem = { title: string; value: number; target: string };
+type ProgressItem = { id?: string; title: string; value: number; target: string };
 
 export default function AdminProgress() {
-  const [progressItems, setProgressItems] = useState<ProgressItem[]>(initialProgressData);
+  const [progressItems, setProgressItems] = useState<ProgressItem[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<ProgressItem | null>(null);
+  const supabase = createClient();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    fetchProgress();
+  }, []);
+
+  const fetchProgress = async () => {
+    const { data, error } = await supabase
+      .from('project_progress')
+      .select('*')
+      .order('created_at', { ascending: true });
+
+    if (data) setProgressItems(data);
+    if (error) {
+      console.error(error);
+      toast({ title: "Error", description: "Failed to load progress", variant: "destructive" });
+    }
+  };
 
   const handleAddItem = () => {
     setEditingItem(null);
@@ -56,22 +77,39 @@ export default function AdminProgress() {
     setIsDialogOpen(true);
   };
 
-  const handleDeleteItem = (title: string) => {
-    setProgressItems(progressItems.filter((item) => item.title !== title));
+  const handleDeleteItem = async (id: string) => {
+    const { error } = await supabase.from('project_progress').delete().eq('id', id);
+    if (!error) {
+      setProgressItems(progressItems.filter((item) => item.id !== id));
+      toast({ title: "Success", description: "Task deleted" });
+    } else {
+      toast({ title: "Error", description: "Failed to delete", variant: "destructive" });
+    }
   };
 
-  const handleFormSubmit = (data: ProgressItem) => {
-    if (editingItem) {
-      setProgressItems(
-        progressItems.map((item) =>
-          item.title === editingItem.title ? data : item
-        )
-      );
-    } else {
-      setProgressItems([...progressItems, data]);
+  const handleFormSubmit = async (data: ProgressItem) => {
+    try {
+      if (editingItem?.id) {
+        const { error } = await supabase
+          .from('project_progress')
+          .update(data)
+          .eq('id', editingItem.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from('project_progress')
+          .insert([data]);
+        if (error) throw error;
+      }
+
+      fetchProgress();
+      setIsDialogOpen(false);
+      setEditingItem(null);
+      toast({ title: "Success", description: "Progress saved" });
+    } catch (error) {
+      console.error(error);
+      toast({ title: "Error", description: "Failed to save progress", variant: "destructive" });
     }
-    setIsDialogOpen(false);
-    setEditingItem(null);
   };
 
   return (
@@ -131,7 +169,7 @@ export default function AdminProgress() {
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>
                       <AlertDialogAction
-                        onClick={() => handleDeleteItem(item.title)}
+                        onClick={() => handleDeleteItem(item.id!)}
                         className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                       >
                         Delete

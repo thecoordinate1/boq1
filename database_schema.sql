@@ -109,3 +109,27 @@ create policy "Authenticated Deletes"
 on storage.objects for delete
 to authenticated
 using ( bucket_id = 'images' );
+
+-- Create project_progress table
+create table if not exists project_progress (
+  id uuid default gen_random_uuid() primary key,
+  title text not null,
+  value numeric not null,
+  target text not null,
+  created_at timestamptz default now()
+);
+
+-- Enable RLS for project_progress
+alter table project_progress enable row level security;
+
+-- Policies for project_progress
+drop policy if exists "Public read access" on project_progress;
+create policy "Public read access"
+  on project_progress for select
+  using (true);
+
+drop policy if exists "Authenticated users can modify" on project_progress;
+create policy "Authenticated users can modify"
+  on project_progress for all
+  to authenticated
+  using (true);
